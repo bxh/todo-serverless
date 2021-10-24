@@ -1,14 +1,10 @@
-import { TodosAccess } from './todosAcess'
-import { AttachmentUtils } from './attachmentUtils';
+import { TodosAccess } from './todosAccess'
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
-import * as createError from 'http-errors'
 
 const todosAccess = new TodosAccess();
-const attachmentUtils = new AttachmentUtils();
 
 export async function createTodo(
     userId: string,
@@ -23,6 +19,7 @@ export async function createTodo(
         name: createTodoRequest.name,
         dueDate: createTodoRequest.dueDate,
         done: false,
+        attachmentUrl: createTodoRequest.attachmentUrl
     });
 }
 
@@ -50,14 +47,7 @@ export async function getTodosForUser(
 
 export async function deleteTodoForUser(
     userId: string,
-    itemId: string
+    todoId: string
 ): Promise<void> {
-    return await todosAccess.deleteTodoForUser(userId, itemId);
-}
-
-export async function createAttachmentPresignedUrl(
-    userId: string,
-    itemId: string
-): Promise<string> {
-    return await attachmentUtils.createAttachmentPresignedUrl(userId, itemId);
+    return await todosAccess.deleteTodoForUser(userId, todoId);
 }

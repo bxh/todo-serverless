@@ -21,6 +21,7 @@ export class TodosAccess {
             TableName: this.todosTable,
             Item: item
         }).promise();
+        logger.info(`Created todo for ${item.userId}`);
 
         return result.$response.data as TodoItem;
     }
@@ -41,6 +42,27 @@ export class TodosAccess {
             ReturnValues: "ALL_NEW"
         }).promise();
 
+        logger.info(`Updated todo ${todoId} for ${userId}`);
+
+        return result.$response.data as TodoItem;
+    }
+
+    async updateTodoWithAttachment(userId: string, todoId: string, attachmentUrl: string ): Promise<TodoItem> {
+        const result = await this.docClient.update({
+            TableName: this.todosTable,
+            Key: {
+                userId: userId,
+                todoId: todoId
+            },
+            UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+            ExpressionAttributeValues: {
+              ':attachmentUrl': attachmentUrl
+            },
+            ReturnValues: "ALL_NEW"
+          }).promise();
+          
+        logger.info(`Updated todo ${todoId} for ${userId} with attachment ${attachmentUrl}.`);
+
         return result.$response.data as TodoItem;
     }
 
@@ -53,6 +75,8 @@ export class TodosAccess {
             }
         }).promise();
 
+        logger.info(`Fetched todos for ${userId}`);
+
         return result.Items as TodoItem[];
     }
 
@@ -64,6 +88,8 @@ export class TodosAccess {
                 "itemId": itemId
             }
         }).promise();
+
+        logger.info(`Deleted todo ${itemId} for ${userId}`);
     }
 }
 

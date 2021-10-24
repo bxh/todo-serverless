@@ -8,6 +8,9 @@
     },
     "dueDate": {
       "type": "string"
+    },
+    "attachmentUrl": {
+      "type": "string"
     }
   },
   "required": [
