@@ -7,12 +7,12 @@ import * as uuid from 'uuid'
 
 import { createAttachmentPresignedUrl } from '../../helpers/attachmentUtils'
 import { updateAttachmentUrl } from '../../helpers/todos'
-//import { getUserId } from '../utils'
+import { getUserId } from '../utils'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId;
-    //const userId = getUserId(event);
+    const userId = getUserId(event);
     const attachmentId =  uuid.v4() as string;
 
     const url = createAttachmentPresignedUrl(attachmentId);

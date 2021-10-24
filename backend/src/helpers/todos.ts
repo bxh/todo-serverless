@@ -23,12 +23,15 @@ export async function createTodo(
     });
 }
 
+export async function getTodo(todoId: string) {
+    return await todosAccess.getTodo(todoId);
+}
+
 export async function updateTodo(
     userId: string,
     todoId: string,
     updateTodoRequest: UpdateTodoRequest
 ): Promise<TodoItem> {
-
     return await todosAccess.updateTodo(
         userId,
         todoId,

@@ -84,6 +84,11 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
+          cors: true
+          auth: Auth
+          request:
+            schemas:
+              application/json: ${file(models/update-todo-model.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -104,8 +109,6 @@ functions:
           - dynamodb:GetItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
-  # TODO: Configure this function
-  # Provide property for setting up CORS, Authorizer, iamRoleStatements
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
