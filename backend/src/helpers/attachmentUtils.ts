@@ -8,7 +8,7 @@ const XAWS = AWSXRay.captureAWS(AWS);
 const logger = createLogger('attachmentUtils');
 
 const s3Client: Types = new XAWS.S3({ signatureVersion: 'v4' });
-const bucketName: string = process.env.BUCKET_NAME;
+const bucketName: string = process.env.ATTACHMENT_S3_BUCKET;
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION;
 
 export async function createAttachmentPresignedUrl(attachmentId: string): Promise<string> {

@@ -51,3 +51,7 @@ export async function deleteTodoForUser(
 ): Promise<void> {
     return await todosAccess.deleteTodoForUser(userId, todoId);
 }
+
+export async function updateAttachmentUrl(todoId: string, attachmentId: string) {
+    await todosAccess.updateAttachmentUrl(todoId, attachmentId)
+}
