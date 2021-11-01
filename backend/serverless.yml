@@ -22,9 +22,9 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_BY_USER_INDEX: TodosByUserIndex
-    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: bxh-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-    AUTH_0_JWKS_URL: jwks.json
+    AUTH_0_JWKS_URL: https://dev-bc205uyt.us.auth0.com/.well-known/jwks.json 
 
   logs:
     # Enable API Gateway logs
@@ -52,8 +52,14 @@ functions:
           method: get
           path: todos
           cors: true
-          auth: Auth
+          authorizer: Auth
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
       - Effect: Allow
         Action:
           - dynamodb:Query
@@ -66,11 +72,17 @@ functions:
           method: post
           path: todos
           cors: true
-          auth: Auth
+          authorizer: Auth
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
       - Effect: Allow
         Action:
           - dynamodb:PutItem
@@ -83,11 +95,17 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
-          auth: Auth
+          authorizer: Auth
           request:
             schemas:
               application/json: ${file(models/update-todo-model.json)}
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
@@ -100,7 +118,15 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
+          cors: true
+          authorizer: Auth
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
@@ -113,7 +139,15 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
+          authorizer: Auth
     iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
       - Effect: Allow
         Action:
           - s3:PutObject

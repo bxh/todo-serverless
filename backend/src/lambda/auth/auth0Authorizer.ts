@@ -10,8 +10,6 @@ const logger = createLogger('auth')
 
 const jwksUrl = process.env.AUTH_0_JWKS_URL
 
-let cachedCertificate: string
-
 export const handler = async (
   event: CustomAuthorizerEvent,
 ): Promise<CustomAuthorizerResult> => {
@@ -72,46 +70,13 @@ function getToken(authHeader: string): string {
 }
 
 async function getCertificate(): Promise<string> {
-  if (cachedCertificate) return cachedCertificate
-
-  logger.info(`Fetching certificate from ${jwksUrl}`)
-
-  const response = await Axios.get(jwksUrl)
-  const keys = response.data.keys
-
-  console.log(keys);
-
-  if (!keys || !keys.length)
-    throw new Error('No JWKS keys found')
-
-  const signingKeys = keys.filter(
-    key => key.use === 'sig'
-           && key.kty === 'RSA'
-           && key.alg === 'RS256'
-           && key.n
-           && key.e
-           && key.kid
-           && (key.x5c && key.x5c.length)
-  )
-
-  if (!signingKeys.length)
-    throw new Error('No JWKS signing keys found')
-  
-  // XXX: Only handles single signing key
-  const key = signingKeys[0]
-  const pub = key.x5c[0]  // public key
-
-  // Certificate found!
-  cachedCertificate = certToPEM(pub)
-
-  logger.info('Valid certificate found', cachedCertificate)
-
-  return cachedCertificate
+  try{
+    const response = await Axios.get(jwksUrl);
+    const key = response['data']['keys'][0]['x5c'][0];
+    const cert = `-----BEGIN CERTIFICATE-----\n${key}\n-----END CERTIFICATE-----`;
+    return cert
+  }
+  catch (error){
+    logger.error('Getting certificate failed',error)
+   }
 }
-
-function certToPEM(cert: string): string {
-  cert = cert.match(/.{1,64}/g).join('\n')
-  cert = `-----BEGIN CERTIFICATE-----\n${cert}\n-----END CERTIFICATE-----\n`
-  return cert
-}
-
