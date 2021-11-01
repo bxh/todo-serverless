@@ -6,8 +6,9 @@ import { cors, httpErrorHandler } from 'middy/middlewares'
 import * as uuid from 'uuid'
 
 import { createAttachmentPresignedUrl } from '../../helpers/attachmentUtils'
-import { updateAttachmentUrl } from '../../helpers/todos'
+import { getTodo, updateAttachmentUrl } from '../../helpers/todos'
 import { getUserId } from '../utils'
+import * as createHttpError from 'http-errors'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -17,6 +18,13 @@ export const handler = middy(
 
     const url = createAttachmentPresignedUrl(attachmentId);
 
+    const item = await getTodo(todoId);
+    if(!item) {
+      throw new createHttpError.Forbidden();
+    }
+    if(item.userId !== userId) {
+      throw new createHttpError.Forbidden();
+    }
     await updateAttachmentUrl(todoId, attachmentId);
 
     return {

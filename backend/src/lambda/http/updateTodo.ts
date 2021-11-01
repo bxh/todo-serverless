@@ -15,11 +15,14 @@ export const handler = middy(
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     const userId = getUserId(event);
 
-    const item = getTodo(todoId);
+    const item = await getTodo(todoId);
     if(!item) {
-      throw new createHttpError.NotFound();
+      throw createHttpError().Forbidden();
     }
-    const newItem = updateTodo(userId, todoId, updatedTodo);
+    if(item.userId !== userId) {
+      throw createHttpError().Forbidden();
+    }
+    const newItem = updateTodo(todoId, updatedTodo);
 
     return {
       statusCode: 200,

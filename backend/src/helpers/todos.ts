@@ -28,12 +28,10 @@ export async function getTodo(todoId: string) {
 }
 
 export async function updateTodo(
-    userId: string,
     todoId: string,
     updateTodoRequest: UpdateTodoRequest
 ): Promise<TodoItem> {
     return await todosAccess.updateTodo(
-        userId,
         todoId,
         {
             name: updateTodoRequest.name,
@@ -49,10 +47,9 @@ export async function getTodosForUser(
 }
 
 export async function deleteTodoForUser(
-    userId: string,
     todoId: string
 ): Promise<void> {
-    return await todosAccess.deleteTodoForUser(userId, todoId);
+    return await todosAccess.deleteTodoForUser(todoId);
 }
 
 export async function updateAttachmentUrl(todoId: string, attachmentId: string) {
